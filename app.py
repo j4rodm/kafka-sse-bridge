@@ -76,9 +76,9 @@ if __name__ == '__main__':
     for variable_name in ["CONSUMER_BOOTSTRAP_1", 
                           "CONSUMER_BOOTSTRAP_2", 
                           "KAFKA_TOPIC", 
-                          "KAFKA_CERT_FILE",
-                          "KAFKA_KEY_FILE",
-                          "KAFKA_CA_FILE"]:
+                          "SSL_CERT_FILE",
+                          "SSL_KEY_FILE",
+                          "SSL_CA_FILE"]:
         if not os.getenv(variable_name, None):
             logging.critical(f"{variable_name} is not found in system ENV or in .env file. Cannot continue")
             unrecoverable_error = True
@@ -93,15 +93,16 @@ if __name__ == '__main__':
     consumer_bootstrap_1 = os.getenv("CONSUMER_BOOTSTRAP_1").split(",")
     consumer_bootstrap_2 = os.getenv("CONSUMER_BOOTSTRAP_2").split(",")
     kafka_topic = os.getenv("KAFKA_TOPIC")
-
-    
+    ssl_cert_file = os.getenv("SSL_CERT_FILE")
+    ssl_key_file = os.getenv("SSL_KEY_FILE")
+    ssl_ca_file = os.getenv("SSL_CA_FILE")
 
     kafka_config = KafkaConfig(consumer_bootstrap_1, 
                                consumer_bootstrap_2, 
                                kafka_topic, 
-                               "", 
-                               "", 
-                               "")
+                               ssl_cert_file, 
+                               ssl_key_file, 
+                               ssl_ca_file)
 
     # Start Kafka consumer in background thread
     consumer_thread = threading.Thread(target=kafka_consumer_thread, args=(kafka_config,), daemon=True)
