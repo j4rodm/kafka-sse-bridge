@@ -8,6 +8,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from dataclasses import dataclass
+from typing import Generator
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -48,7 +49,7 @@ def kafka_consumer_thread(kafka_config: KafkaConfig) -> None:
         # Put message in queue for all SSE clients
         message_queue.put(message.value)
 
-def event_stream():
+def event_stream() -> Generator[str, None, None]:
     """Generator function for SSE events"""
     while True:
         # Block until a message is available
@@ -57,12 +58,12 @@ def event_stream():
         yield f"data: {message}\n\n"
 
 @app.route('/events')
-def sse():
+def sse() -> Response:
     """SSE endpoint for clients to connect"""
     return Response(event_stream(), mimetype='text/event-stream')
 
 @app.route('/health')
-def health():
+def health() -> Response:
     """Health check endpoint"""
     return {'status': 'ok'}
 
